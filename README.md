@@ -12,3 +12,13 @@ The project will run on the camera installed in the library, and our model will 
 make an inference about the occupancy rate at the table through the data obtained from the
 camera. Our model will also be able to detect situations such as items left on the table or students
 who do not have anything on the table but are in their chairs.
+
+## Followed Documentations - Tutorials - Repositories
+
+* https://github.com/ultralytics/ultralytics
+
+* https://github.com/BenGreenfield825/Tensorflow-Object-Detection-with-Tensorflow-2.0/blob/master/detection_scripts/detect_from_webcam.py
+
+* https://www.tensorflow.org/hub/tutorials/object_detection?hl=tr
+
+* https://dipankarmedh1.medium.com/real-time-object-detection-with-yolo-and-webcam-enhancing-your-computer-vision-skills-861b97c78993
