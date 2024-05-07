@@ -42,7 +42,7 @@ while True:
             confidence = math.ceil((box.conf[0]*100))/100
             print("Confidence --->",confidence)
 
-            if confidence < 0.6:
+            if confidence < 0.8:
                 continue
 
             # class name
