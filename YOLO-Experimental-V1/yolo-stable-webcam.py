@@ -35,6 +35,7 @@ while True:
     results = model(img, stream=True)
 
     chair_occupied = False
+    person_detected = False
 
     for r in results:
         boxes = r.boxes
@@ -44,37 +45,65 @@ while True:
             cls = int(box.cls[0])
 
             # Check if the detected object is either a bottle or a person
-            if classNames[cls] in ["bottle", "person"]:
+            if classNames[cls] == "person":
                 # Bounding box
-                x1, y1, x2, y2 = box.xyxy[0]
-                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)  # Convert to int values
+                x1_person, y1_person, x2_person, y2_person = box.xyxy[0]
+                x1_person, y1_person, x2_person, y2_person = int(x1_person), int(y1_person), int(x2_person), int(y2_person)
 
-                # Draw bounding box
-                cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+                # Draw bounding box for person
+                cv2.rectangle(img, (x1_person, y1_person), (x2_person, y2_person), (0, 255, 255), 3)
 
                 # Confidence
-                confidence = math.ceil((box.conf[0]*100))/100
+                confidence_person = math.ceil((box.conf[0]*100))/100
 
                 # Add confidence to the top right corner of the box
-                text = f"{classNames[cls]} {confidence}"
-                text_size, _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)
-                text_x = x2 - text_size[0]
-                text_y = y1 - 10 if y1 - 10 > 10 else y1 + 10  # Adjust text position if it's too close to the top
+                text_person = f"Person {confidence_person}"
+                text_size_person, _ = cv2.getTextSize(text_person, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)
+                text_x_person = x2_person - text_size_person[0]
+                text_y_person = y1_person - 10 if y1_person - 10 > 10 else y1_person + 10  # Adjust text position if it's too close to the top
 
-                cv2.putText(img, text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+                cv2.putText(img, text_person, (text_x_person, text_y_person), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
 
-                # Check if the detected object is within the ROI
-                if (x1 < chair_roi[2] and x2 > chair_roi[0] and
-                        y1 < chair_roi[3] and y2 > chair_roi[1]):
+                # Check if the person's bounding box overlaps with the specified area
+                intersection_area = max(0, min(x2_person, chair_roi[2]) - max(x1_person, chair_roi[0])) * max(
+                    0, min(y2_person, chair_roi[3]) - max(y1_person, chair_roi[1]))
+                person_area = (x2_person - x1_person) * (y2_person - y1_person)
+                if intersection_area / person_area >= 0.6:
+                    person_detected = True
+
+            elif classNames[cls] == "bottle":
+                # Bounding box
+                x1_bottle, y1_bottle, x2_bottle, y2_bottle = box.xyxy[0]
+                x1_bottle, y1_bottle, x2_bottle, y2_bottle = int(x1_bottle), int(y1_bottle), int(x2_bottle), int(y2_bottle)
+
+                # Draw bounding box for bottle
+                cv2.rectangle(img, (x1_bottle, y1_bottle), (x2_bottle, y2_bottle), (255, 255, 0), 3)
+
+                # Confidence
+                confidence_bottle = math.ceil((box.conf[0]*100))/100
+
+                # Add confidence to the top right corner of the box
+                text_bottle = f"Bottle {confidence_bottle}"
+                text_size_bottle, _ = cv2.getTextSize(text_bottle, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)
+                text_x_bottle = x2_bottle - text_size_bottle[0]
+                text_y_bottle = y1_bottle - 10 if y1_bottle - 10 > 10 else y1_bottle + 10  # Adjust text position if it's too close to the top
+
+                cv2.putText(img, text_bottle, (text_x_bottle, text_y_bottle), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 0), 2)
+
+                # Check if the bottle's bounding box overlaps with the specified area
+                intersection_area = max(0, min(x2_bottle, chair_roi[2]) - max(x1_bottle, chair_roi[0])) * max(
+                    0, min(y2_bottle, chair_roi[3]) - max(y1_bottle, chair_roi[1]))
+                bottle_area = (x2_bottle - x1_bottle) * (y2_bottle - y1_bottle)
+                if intersection_area / bottle_area >= 0.6:
                     chair_occupied = True
+
+    # Display a message if the chair is occupied by a person or a bottle
+    if chair_occupied or person_detected:
+        cv2.putText(img, "Chair Occupied", (chair_roi[0], chair_roi[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
 
     # Draw the ROI for the chair
     cv2.rectangle(img, (chair_roi[0], chair_roi[1]), (chair_roi[2], chair_roi[3]), (0, 255, 0), 2)
-
-    # Display a message if the chair is occupied
-    if chair_occupied:
-        cv2.putText(img, "Chair Occupied", (chair_roi[0], chair_roi[1] - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
 
     # Display the frame
     cv2.imshow('Webcam', img)
@@ -83,5 +112,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-
-
