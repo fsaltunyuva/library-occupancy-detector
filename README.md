@@ -22,3 +22,20 @@ who do not have anything on the table but are in their chairs.
 * https://www.tensorflow.org/hub/tutorials/object_detection?hl=tr
 
 * https://dipankarmedh1.medium.com/real-time-object-detection-with-yolo-and-webcam-enhancing-your-computer-vision-skills-861b97c78993
+
+## Important Notes
+
+* Do not use names like "tensorflow.py" or "tensorflow_webcam.py" that clashes with TensorFlow's internal modules, it can cause import issues.
+
+
+## Required Packages
+
+### For TensorFlow
+
+`pip install tensorflow_hub`
+
+`pip install tensorflow`
+
+### For YOLO
+
+`pip install ultralytics`

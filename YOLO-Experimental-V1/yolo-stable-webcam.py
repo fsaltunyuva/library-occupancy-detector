@@ -23,47 +23,59 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
               "teddy bear", "hair drier", "toothbrush"
               ]
 
+# Define the specific area (ROI) for the chair
+# For example, the chair is located at the region (x1, y1) to (x2, y2)
+chair_roi = (200, 150, 400, 300)  # (x1, y1, x2, y2)
+
 while True:
     success, img = cap.read()
+    if not success:
+        break
+
     results = model(img, stream=True)
 
-    # Coordinates
+    chair_occupied = False
+
     for r in results:
         boxes = r.boxes
 
         for box in boxes:
             # Bounding box
             x1, y1, x2, y2 = box.xyxy[0]
-            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2) # Convert to int values
+            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)  # Convert to int values
 
             # Draw bounding box
             cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
 
             # Confidence
             confidence = math.ceil((box.conf[0]*100))/100
-            print("Confidence --->", confidence)
 
             # Class name
             cls = int(box.cls[0])
-            # print("Class name -->", classNames[cls])
 
             # Add confidence to the top right corner of the box
-            text = f"{confidence}"
+            text = f"{classNames[cls]} {confidence}"
             text_size, _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)
             text_x = x2 - text_size[0]
             text_y = y1 - 10 if y1 - 10 > 10 else y1 + 10  # Adjust text position if it's too close to the top
 
             cv2.putText(img, text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
 
-            # Object details (optional)
-            org = [x1, y1]
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            fontScale = 1
-            color = (255, 0, 0)
-            thickness = 2
+            # Check if the detected object is within the ROI
+            if classNames[cls] == "person":
+                if (x1 < chair_roi[2] and x2 > chair_roi[0] and
+                        y1 < chair_roi[3] and y2 > chair_roi[1]):
+                    chair_occupied = True
 
-            cv2.putText(img, classNames[cls], org, font, fontScale, color, thickness)
+    # Draw the ROI for the chair
+    cv2.rectangle(img, (chair_roi[0], chair_roi[1]), (chair_roi[2], chair_roi[3]), (0, 255, 0), 2)
 
+    # Display a message if the chair is occupied
+    if chair_occupied:
+        cv2.putText(img, "Chair Occupied", (chair_roi[0], chair_roi[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+
+    # Display the frame
     cv2.imshow('Webcam', img)
     if cv2.waitKey(1) == ord('q'):
         break
