@@ -41,3 +41,7 @@ who do not have anything on the table but are in their chairs.
 ### For YOLO
 
 `pip install ultralytics`
+
+## Known Issues
+
+* YOLO detects too many instances in a specific area and crashes.
