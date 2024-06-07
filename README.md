@@ -45,3 +45,9 @@ who do not have anything on the table but are in their chairs.
 ## Known Issues
 
 * YOLO detects too many instances in a specific area and crashes.
+
+## Poster
+
+<p float="left">
+<img src="https://github.com/fsaltunyuva/library-occupancy-detector/blob/main/Documents/Poster.png"/>  
+</p>
