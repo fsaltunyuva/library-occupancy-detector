@@ -13,6 +13,13 @@ make an inference about the occupancy rate at the table through the data obtaine
 camera. Our model will also be able to detect situations such as items left on the table or students
 who do not have anything on the table but are in their chairs.
 
+## Active TODOs
+
+* Using GPU for better performance.
+* Upgrading to YOLOv10 for better results.
+* Making the code more generic for multiple chairs.
+* For better performance and workload, detect objects every second instead of every frame.
+
 ## Followed Documentations - Tutorials - Repositories
 
 * https://github.com/ultralytics/ultralytics
