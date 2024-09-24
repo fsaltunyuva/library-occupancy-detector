@@ -1,9 +1,8 @@
+import time
+
 from ultralytics import YOLO
 import cv2
 import math
-
-# TODO: Take a frame every second and check if the chair is occupied by a person
-#  or an object instead of checking every frames to optimize the performance
 
 # Start webcam
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -153,6 +152,10 @@ while True:
     cv2.imshow('Webcam', img)
     if cv2.waitKey(1) == ord('q'):
         break
+
+    time.sleep(3)
+    # Take a frame every second and check if the chair is occupied by a person or an object instead of checking every frames to optimize the performance
+
 
 cap.release()
 cv2.destroyAllWindows()
