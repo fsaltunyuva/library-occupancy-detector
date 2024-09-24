@@ -12,7 +12,7 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 # Load model
-model = YOLO("yolo-Weights/yolov8n.pt")
+model = YOLO("yolo-Weights/yolov10n.pt")
 
 # Object classes
 classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
