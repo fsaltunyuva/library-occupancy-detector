@@ -15,10 +15,10 @@ who do not have anything on the table but are in their chairs.
 
 ## Active TODOs
 
-* Using GPU for better performance.
-* Upgrading to YOLOv10 for better results.
-* Making the code more generic for multiple chairs.
-* For better performance and workload, detect objects every second instead of every frame.
+- [] Using GPU for better performance.
+- [x] Upgrading to YOLOv10 for better results.
+- [] Making the code more generic for multiple chairs.
+- [x] For better performance and workload, detect objects every second instead of every frame.
 
 ## Followed Documentations - Tutorials - Repositories
 
