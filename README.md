@@ -19,6 +19,7 @@ who do not have anything on the table but are in their chairs.
 - [x] Upgrading to YOLOv10 for better results.
 - [ ] Making the code more generic for multiple chairs.
 - [x] For better performance and workload, detect objects every second instead of every frame.
+- [ ] Detect other possible objects that may be used for holding (backpacks, bottle, umbrella, book, etc.)
 
 ## Followed Documentations - Tutorials - Repositories
 
