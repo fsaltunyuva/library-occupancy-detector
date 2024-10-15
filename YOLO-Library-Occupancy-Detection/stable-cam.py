@@ -43,6 +43,8 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
               "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
               "teddy bear", "hair drier", "toothbrush"]
 
+# model.names can be used to get the class names of the current YOLO version
+
 # model.to('cuda')  # Use GPU for faster inference
 
 objects_that_can_be_detected = ["cell phone", "bottle", "backpack", "umbrella", "handbag", "suitcase", "apple",
