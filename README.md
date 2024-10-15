@@ -15,42 +15,52 @@ who do not have anything on the table but are in their chairs.
 
 ## Active TODOs
 
+### Code Related TODOs
 - [ ] Using GPU for better performance.
 - [x] Upgrading to YOLOv10 for better results.
+- [ ] Upgrading to YOLOv11 for better results.
 - [ ] Making the code more generic for multiple chairs.
 - [x] For better performance and workload, detect objects every second instead of every frame.
 - [ ] Detect other possible objects that may be used for holding (backpacks, bottle, umbrella, book, etc.)
+- [ ] Send occupancy data to Firebase database.
+- [ ] Detect other objects that are not included in class names of YOLO.
+- 
+### Project Related TODOs
+- [ ] Testing the cameras with USB extension cables.
+- [ ] Installation of the cameras in the library.
+- [ ] Customize the script for the library environment after camera installation.
+- [ ] Develop the desktop application for the project in Flutter.
+- [ ] Create a website for the project.
 
 ## Followed Documentations - Tutorials - Repositories
 
-* https://github.com/ultralytics/ultralytics
+* [Ultralytics GitHub Repository](https://github.com/ultralytics/ultralytics)
 
-* https://github.com/BenGreenfield825/Tensorflow-Object-Detection-with-Tensorflow-2.0/blob/master/detection_scripts/detect_from_webcam.py
+* [Sample Code for Webcam Object Detection](https://github.com/BenGreenfield825/Tensorflow-Object-Detection-with-Tensorflow-2.0/blob/master/detection_scripts/detect_from_webcam.py)
 
-* https://www.tensorflow.org/hub/tutorials/object_detection?hl=tr
+* [TensorFlow Object Detection Tutorial](https://www.tensorflow.org/hub/tutorials/object_detection)
 
-* https://dipankarmedh1.medium.com/real-time-object-detection-with-yolo-and-webcam-enhancing-your-computer-vision-skills-861b97c78993
+* [Classnames for the YOLO](https://dipankarmedh1.medium.com/real-time-object-detection-with-yolo-and-webcam-enhancing-your-computer-vision-skills-861b97c78993)
 
-* https://docs.ultralytics.com/help/FAQ/ (YOLO Recommends to run the script on GPUs with a minimum of 8GB of memory.)
+* [YOLO's datasets for specified tasks](https://docs.ultralytics.com/models/yolo11/#supported-tasks-and-modes)
 
-* https://docs.ultralytics.com/models/yolo11/#supported-tasks-and-modes
-
-## Important Notes
+> [!IMPORTANT]
 
 * Do not use names like "tensorflow.py" or "tensorflow_webcam.py" that clashes with TensorFlow's internal modules, it can cause import issues.
 
+* [YOLO Recommends to run the script on GPUs with a minimum of 8GB of memory.](https://docs.ultralytics.com/help/FAQ/)
 
 ## Required Packages
 
 ### For TensorFlow
-
-`pip install tensorflow_hub`
-
-`pip install tensorflow`
+```
+pip install tensorflow
+```
 
 ### For YOLO
-
-`pip install ultralytics`
+```
+pip install ultralytics
+```
 
 ## Known Issues
 
