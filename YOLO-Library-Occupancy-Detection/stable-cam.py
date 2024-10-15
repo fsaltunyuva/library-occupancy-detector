@@ -7,7 +7,7 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 # Firebase Admin SDK JSON credentials file
-cred = credentials.Certificate("C:\\Users\\furkan\\Downloads\\lod-db-firebase-adminsdk-fxv18-8b740ef661.json")
+cred = credentials.Certificate("path-to-json-file")
 
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {
@@ -176,7 +176,7 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         break
 
-    # time.sleep(5)
+    time.sleep(5)
 
     # Take a frame every second and check if the chair is occupied by a person or an object instead of checking every frames to optimize the performance
     ref.child('chair1_occupancy').set(1 if chair1_occupancy else 0)
