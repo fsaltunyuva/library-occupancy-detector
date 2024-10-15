@@ -45,7 +45,6 @@ who do not have anything on the table but are in their chairs.
 * [YOLO's datasets for specified tasks](https://docs.ultralytics.com/models/yolo11/#supported-tasks-and-modes)
 
 > [!IMPORTANT]
-
 * Do not use names like "tensorflow.py" or "tensorflow_webcam.py" that clashes with TensorFlow's internal modules, it can cause import issues.
 
 * [YOLO Recommends to run the script on GPUs with a minimum of 8GB of memory.](https://docs.ultralytics.com/help/FAQ/)
