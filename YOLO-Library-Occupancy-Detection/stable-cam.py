@@ -3,6 +3,19 @@ import time
 from ultralytics import YOLO
 import cv2
 import math
+import firebase_admin
+from firebase_admin import credentials, db
+
+# Firebase Admin SDK JSON credentials file
+cred = credentials.Certificate("C:\\Users\\furkan\\Downloads\\lod-db-firebase-adminsdk-fxv18-8b740ef661.json")
+
+# Initialize the app with a service account, granting admin privileges
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://lod-db-default-rtdb.firebaseio.com/'  # Replace with your database URL
+})
+
+# Reference to the database path you want to update
+ref = db.reference('occupancy')
 
 # Start webcam
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -33,6 +46,11 @@ chair_roi = (0, 30, 310, 610)  # (x1, y1, x2, y2)
 chair_roi2 = (310, 30, 630, 610)  # (x1, y1, x2, y2)
 
 while True:
+    chair1_occupancy = False
+    chair2_occupancy = False
+    chair1_hold = False
+    chair2_hold = False
+
     success, img = cap.read()
     if not success:
         break
@@ -131,19 +149,23 @@ while True:
     if person_detected_for_chair1:
         cv2.putText(img, "Chair 1 Occupied", (chair_roi[0], chair_roi[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+        chair1_occupancy = True
 
     elif cell_phone_detected_for_chair1 and not person_detected_for_chair1:
         cv2.putText(img, "Chair 1 Hold", (chair_roi[0], chair_roi[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
+        chair1_hold = True
 
     # For chair 2
     if person_detected2_for_chair2:
         cv2.putText(img, "Chair 2 Occupied", (chair_roi2[0], chair_roi2[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+        chair2_occupancy = True
 
     elif cell_phone_detected_for_chair2 and not person_detected2_for_chair2:
         cv2.putText(img, "Chair 2 Hold", (chair_roi2[0], chair_roi2[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
+        chair2_hold = True
 
     # Draw the ROI (Region of Interest) for the chair
     cv2.rectangle(img, (chair_roi[0], chair_roi[1]), (chair_roi[2], chair_roi[3]), (0, 255, 0), 2)
@@ -154,8 +176,15 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         break
 
-    time.sleep(3)
+    # time.sleep(5)
+
     # Take a frame every second and check if the chair is occupied by a person or an object instead of checking every frames to optimize the performance
+    ref.child('chair1_occupancy').set(1 if chair1_occupancy else 0)
+    ref.child('chair2_occupancy').set(1 if chair2_occupancy else 0)
+    ref.child('chair1_hold').set(1 if chair1_hold else 0)
+    ref.child('chair2_hold').set(1 if chair2_hold else 0)
+
+    print("Database updated successfully!")
 
 
 cap.release()
