@@ -25,8 +25,11 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 # Load model
+# TODO: Upgrade the YOLO to 11.0 version for better performance (Use the proper one in the link located in README.md)
 model = YOLO("yolov10n.pt")  # s-m-b-l-x models can be used for further accuracy
 # (https://github.com/THU-MIG/yolov10?tab=readme-ov-file#performance)
+
+# model.to('cuda')  # TODO: Use GPU for faster inference
 
 # Object classes
 classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
@@ -39,6 +42,13 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
               "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone",
               "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
               "teddy bear", "hair drier", "toothbrush"]
+
+# model.to('cuda')  # Use GPU for faster inference
+
+objects_that_can_be_detected = ["cell phone", "bottle", "backpack", "umbrella", "handbag", "suitcase", "apple",
+                                "skateboard", "cup", "fork", "knife", "spoon", "bowl", "sandwich",
+                                "orange", "brocoli", "carrot", "hot dog", "pizza", "donut", "cake",
+                                "laptop", "mouse", "keyboard", "book", "scissors"]  # Add other objects if needed
 
 # Define the specific area (ROI - Region of Interest) for the chair
 # For example, the chair is located at the region (x1, y1) to (x2, y2)
@@ -105,7 +115,9 @@ while True:
                 if intersection_area_of_chair2 / person_area >= 0.6:
                     person_detected2_for_chair2 = True
 
-            elif classNames[cls] == "cell phone":
+            # elif classNames[cls] == "cell phone":
+            elif objects_that_can_be_detected.__contains__(classNames[cls]): # Check if the detected object is in the list of objects that can be detected
+                # TODO: Change the variables and displayed name for the object detected
                 # Bounding box
                 x1_cell_phone, y1_cell_phone, x2_cell_phone, y2_cell_phone = box.xyxy[0]
                 x1_cell_phone, y1_cell_phone, x2_cell_phone, y2_cell_phone = int(x1_cell_phone), int(y1_cell_phone), int(x2_cell_phone), int(y2_cell_phone)
@@ -177,15 +189,13 @@ while True:
         break
 
     time.sleep(5)
-
     # Take a frame every second and check if the chair is occupied by a person or an object instead of checking every frames to optimize the performance
+
     ref.child('chair1_occupancy').set(1 if chair1_occupancy else 0)
     ref.child('chair2_occupancy').set(1 if chair2_occupancy else 0)
     ref.child('chair1_hold').set(1 if chair1_hold else 0)
     ref.child('chair2_hold').set(1 if chair2_hold else 0)
-
     print("Database updated successfully!")
-
 
 cap.release()
 cv2.destroyAllWindows()
