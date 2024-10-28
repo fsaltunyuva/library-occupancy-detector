@@ -146,7 +146,7 @@ while True:
                 confidence_cell_phone = math.ceil((box.conf[0] * 100)) / 100
 
                 # Add confidence to the top right corner of the box
-                text_bottle = f"cell phone {confidence_cell_phone}"
+                text_bottle = f"Object {confidence_cell_phone}"
                 text_size_cell_phone, _ = cv2.getTextSize(text_bottle, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)
                 text_x_cell_phone = x2_cell_phone - text_size_cell_phone[0]
                 text_y_cell_phone = y1_cell_phone - 10 if y1_cell_phone - 10 > 10 else y1_cell_phone + 10  # Adjust text position if it's too close to the top
