@@ -24,7 +24,6 @@ cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 576)
 
-
 # Load model
 # TODO: Upgrade the YOLO to 11.0 version for better performance (Use the proper one in the link located in README.md)
 model = YOLO("yolov10n.pt")  # s-m-b-l-x models can be used for further accuracy
@@ -58,6 +57,10 @@ objects_that_can_be_detected = ["cell phone", "bottle", "backpack", "umbrella", 
 chair_roi1 = (0, 30, 340, 610)  # (x1, y1, x2, y2)
 chair_roi2 = (350, 30, 680, 610)  # (x1, y1, x2, y2)
 chair_roi3 = (690, 30, 1024, 610)  # (x1, y1, x2, y2)
+
+chair1_history = []
+chair2_history = []
+chair3_history = []
 
 while True:
     chair1_occupancy = False
@@ -182,33 +185,58 @@ while True:
         cv2.putText(img, "Chair 1 Occupied", (chair_roi1[0], chair_roi1[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
         chair1_occupancy = True
+        chair1_history.append("Occupied")
 
     elif cell_phone_detected_for_chair1 and not person_detected_for_chair1:
         cv2.putText(img, "Chair 1 Hold", (chair_roi1[0], chair_roi1[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
         chair1_hold = True
+        chair1_history.append("Hold")
+    else:
+        cv2.putText(img, "Chair 1 Available", (chair_roi1[0], chair_roi1[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 185), 2)
+        chair1_history.append("Available")
 
     # For chair 2
     if person_detected_for_chair2:
         cv2.putText(img, "Chair 2 Occupied", (chair_roi2[0], chair_roi2[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
         chair2_occupancy = True
+        chair2_history.append("Occupied")
 
     elif cell_phone_detected_for_chair2 and not person_detected_for_chair2:
         cv2.putText(img, "Chair 2 Hold", (chair_roi2[0], chair_roi2[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
         chair2_hold = True
+        chair2_history.append("Hold"),
+    else:
+        cv2.putText(img, "Chair 2 Available", (chair_roi2[0], chair_roi2[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 185), 2)
+        chair2_history.append("Available")
 
     # For chair 3
     if person_detected_for_chair3:
         cv2.putText(img, "Chair 3 Occupied", (chair_roi3[0], chair_roi3[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
         chair3_occupancy = True
+        chair3_history.append("Occupied")
 
     elif cell_phone_detected_for_chair3 and not person_detected_for_chair3:
         cv2.putText(img, "Chair 3 Hold", (chair_roi3[0], chair_roi3[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
         chair3_hold = True
+        chair3_history.append("Hold")
+    else:
+        cv2.putText(img, "Chair 3 Available", (chair_roi3[0], chair_roi3[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 185), 2)
+        chair3_history.append("Available") ## TODO: Should database be updated here as available?
+
+    if len(chair1_history) > 12:
+        chair1_history.pop(0)
+    if len(chair2_history) > 12:
+        chair2_history.pop(0)
+    if len(chair3_history) > 12:
+        chair3_history.pop(0)
 
     # Draw the ROI (Region of Interest) for the chair
     cv2.rectangle(img, (chair_roi1[0], chair_roi1[1]), (chair_roi1[2], chair_roi1[3]), (0, 255, 0), 2)
@@ -220,22 +248,85 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         break
 
-    # time.sleep(1)
+    time.sleep(4)
     # Take a frame every second and check if the chair is occupied by a person or an object instead of checking every frames to optimize the performance
 
-    ref.child('chair1').update({
-        "occupied": chair1_occupancy,
-        "hold": chair1_hold
-    })
-    ref.child('chair2').update({
-        "occupied": chair2_occupancy,
-        "hold": chair2_hold
-    })
-    ref.child('chair3').update({
-        "occupied": chair3_occupancy,
-        "hold": chair3_hold
-    })
+    if len(chair1_history) == 12: # TODO: Make this 12 and 9 logic dynamic
+        occupied_count = chair1_history.count("Occupied")
+        hold_count = chair1_history.count("Hold")
+
+        if occupied_count >= 9:
+            ref.child('chair1').update({
+                "occupied": True,
+                "hold": False
+            })
+        elif hold_count >= 9:
+            ref.child('chair1').update({
+                "occupied": False,
+                "hold": True
+            })
+        else:
+            ref.child('chair1').update({
+                "occupied": False,
+                "hold": False
+            })
+        print("Database updated with 1-minute occupancy status")
+
+    if len(chair2_history) == 12:
+        occupied_count = chair2_history.count("Occupied")
+        hold_count = chair2_history.count("Hold")
+
+        if occupied_count >= 9:
+            ref.child('chair2').update({
+                "occupied": True,
+                "hold": False
+            })
+        elif hold_count >= 9:
+            ref.child('chair2').update({
+                "occupied": False,
+                "hold": True
+            })
+        else:
+            ref.child('chair2').update({
+                "occupied": False,
+                "hold": False
+            })
+        print("Database updated with 1-minute occupancy status")
+
+    if len(chair3_history) == 12:
+        occupied_count = chair3_history.count("Occupied")
+        hold_count = chair3_history.count("Hold")
+
+        if occupied_count >= 9:
+            ref.child('chair3').update({
+                "occupied": True,
+                "hold": False
+            })
+        elif hold_count >= 9:
+            ref.child('chair3').update({
+                "occupied": False,
+                "hold": True
+            })
+        else:
+            ref.child('chair3').update({
+                "occupied": False,
+                "hold": False
+            })
+        print("Database updated with 1-minute occupancy status")
     print("Database updated successfully!")
 
+# Make all bools false in database
+ref.child('chair1').update({
+    "occupied": False,
+    "hold": False
+})
+ref.child('chair2').update({
+    "occupied": False,
+    "hold": False
+})
+ref.child('chair3').update({
+    "occupied": False,
+    "hold": False
+})
 cap.release()
 cv2.destroyAllWindows()
