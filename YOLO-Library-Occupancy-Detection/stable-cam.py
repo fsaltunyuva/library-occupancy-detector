@@ -3,26 +3,27 @@ import time
 from ultralytics import YOLO
 import cv2
 import math
-import firebase_admin
-from firebase_admin import credentials, db
-
-# Firebase Admin SDK JSON credentials file
-cred = credentials.Certificate("path-to-json-file")
-
-# Initialize the app with a service account, granting admin privileges
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://lod-db-default-rtdb.firebaseio.com/'  # Replace with your database URL
-})
+# import firebase_admin
+# from firebase_admin import credentials, db
+#
+# # Firebase Admin SDK JSON credentials file
+# cred = credentials.Certificate("path-to-json-file")
+#
+# # Initialize the app with a service account, granting admin privileges
+# firebase_admin.initialize_app(cred, {
+#     'databaseURL': 'https://lod-db-default-rtdb.firebaseio.com/'  # Replace with your database URL
+# })
 
 # Reference to the database path you want to update
-ref = db.reference('occupancy')
+# ref = db.reference('occupancy')
 
 # Start webcam
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(1, cv2.CAP_MSMF)
 
 # Webcam Resolution
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 576)
+
 
 # Load model
 # TODO: Upgrade the YOLO to 11.0 version for better performance (Use the proper one in the link located in README.md)
@@ -54,14 +55,18 @@ objects_that_can_be_detected = ["cell phone", "bottle", "backpack", "umbrella", 
 
 # Define the specific area (ROI - Region of Interest) for the chair
 # For example, the chair is located at the region (x1, y1) to (x2, y2)
-chair_roi = (0, 30, 310, 610)  # (x1, y1, x2, y2)
-chair_roi2 = (310, 30, 630, 610)  # (x1, y1, x2, y2)
+chair_roi = (0, 30, 340, 610)  # (x1, y1, x2, y2)
+chair_roi2 = (350, 30, 680, 610)  # (x1, y1, x2, y2)
+chair_roi3 = (690, 30, 1024, 610)  # (x1, y1, x2, y2)
+
 
 while True:
     chair1_occupancy = False
     chair2_occupancy = False
+    chair3_occupancy = False
     chair1_hold = False
     chair2_hold = False
+    chair3_hold = False
 
     success, img = cap.read()
     if not success:
@@ -71,8 +76,11 @@ while True:
 
     cell_phone_detected_for_chair1 = False
     cell_phone_detected_for_chair2 = False
+    cell_phone_detected_for_chair3 = False
     person_detected_for_chair1 = False
     person_detected2_for_chair2 = False
+    person_detected2_for_chair3 = False
+
 
     for result in results:
         boxes = result.boxes
@@ -109,6 +117,9 @@ while True:
                 intersection_area_of_chair2 = max(0, min(x2_person, chair_roi2[2]) - max(x1_person, chair_roi2[0])) * max(
                     0, min(y2_person, chair_roi2[3]) - max(y1_person, chair_roi2[1]))
 
+                intersection_area_of_chair3 = max(0, min(x2_person, chair_roi3[2]) - max(x1_person, chair_roi3[0])) * max(
+                    0, min(y2_person, chair_roi3[3]) - max(y1_person, chair_roi3[1]))
+
                 person_area = (x2_person - x1_person) * (y2_person - y1_person)
 
                 if intersection_area_of_chair1 / person_area >= 0.6:
@@ -116,6 +127,9 @@ while True:
 
                 if intersection_area_of_chair2 / person_area >= 0.6:
                     person_detected2_for_chair2 = True
+
+                if intersection_area_of_chair3 / person_area >= 0.6:
+                    person_detected2_for_chair3 = True
 
             # elif classNames[cls] == "cell phone":
             elif objects_that_can_be_detected.__contains__(classNames[cls]): # Check if the detected object is in the list of objects that can be detected
@@ -146,6 +160,9 @@ while True:
                 intersection_area_of_chair2 = max(0, min(x2_cell_phone, chair_roi2[2]) - max(x1_cell_phone, chair_roi2[0])) * max(
                     0, min(y2_cell_phone, chair_roi2[3]) - max(y1_cell_phone, chair_roi2[1]))
 
+                intersection_area_of_chair3 = max(0, min(x2_cell_phone, chair_roi3[2]) - max(x1_cell_phone, chair_roi3[0])) * max(
+                    0, min(y2_cell_phone, chair_roi3[3]) - max(y1_cell_phone, chair_roi3[1]))
+
                 cell_phone_area = (x2_cell_phone - x1_cell_phone) * (y2_cell_phone - y1_cell_phone)
 
                 if intersection_area_of_chair1 / cell_phone_area >= 0.6:
@@ -153,6 +170,9 @@ while True:
 
                 if intersection_area_of_chair2 / cell_phone_area >= 0.6:
                     cell_phone_detected_for_chair2 = True
+
+                if intersection_area_of_chair3 / cell_phone_area >= 0.6:
+                    cell_phone_detected_for_chair3 = True
 
             # TODO: Create other elif statements for other objects if needed
 
@@ -181,23 +201,36 @@ while True:
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
         chair2_hold = True
 
+    # For chair 3
+    if person_detected2_for_chair3:
+        cv2.putText(img, "Chair 3 Occupied", (chair_roi3[0], chair_roi3[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+        chair3_occupancy = True
+
+    elif cell_phone_detected_for_chair3 and not person_detected2_for_chair3:
+        cv2.putText(img, "Chair 3 Hold", (chair_roi3[0], chair_roi3[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
+        chair3_hold = True
+
     # Draw the ROI (Region of Interest) for the chair
     cv2.rectangle(img, (chair_roi[0], chair_roi[1]), (chair_roi[2], chair_roi[3]), (0, 255, 0), 2)
     cv2.rectangle(img, (chair_roi2[0], chair_roi2[1]), (chair_roi2[2], chair_roi2[3]), (0, 255, 0), 2)
+    cv2.rectangle(img, (chair_roi3[0], chair_roi3[1]), (chair_roi3[2], chair_roi3[3]), (0, 255, 0), 2)
+
 
     # Display the frame
     cv2.imshow('Webcam', img)
     if cv2.waitKey(1) == ord('q'):
         break
 
-    time.sleep(5)
+    #time.sleep(1)
     # Take a frame every second and check if the chair is occupied by a person or an object instead of checking every frames to optimize the performance
 
-    ref.child('chair1_occupancy').set(1 if chair1_occupancy else 0)
-    ref.child('chair2_occupancy').set(1 if chair2_occupancy else 0)
-    ref.child('chair1_hold').set(1 if chair1_hold else 0)
-    ref.child('chair2_hold').set(1 if chair2_hold else 0)
-    print("Database updated successfully!")
+    # ref.child('chair1_occupancy').set(1 if chair1_occupancy else 0)
+    # ref.child('chair2_occupancy').set(1 if chair2_occupancy else 0)
+    # ref.child('chair1_hold').set(1 if chair1_hold else 0)
+    # ref.child('chair2_hold').set(1 if chair2_hold else 0)
+    # print("Database updated successfully!")
 
 cap.release()
 cv2.destroyAllWindows()
