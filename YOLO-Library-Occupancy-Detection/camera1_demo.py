@@ -9,12 +9,12 @@ cred = credentials.Certificate("path-to-json-file")
 
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://lod-db-default-rtdb.firebaseio.com/'  # Replace with your database URL
+    'databaseURL': 'https://lod-db-2-default-rtdb.firebaseio.com/'  # Replace with your database URL
 })
 
 # Reference to the database path you want to update
 # TODO: Create another database reference for the demo
-ref = db.reference('libraries/libraryB/occupancy/Camera1')
+ref = db.reference('libraries/0/occupancy/cameras/0/chairs')
 
 # Start webcam
 cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)  # 0 for the embedded webcam, 1 for the second, 2 for the third, etc.
@@ -220,15 +220,15 @@ while True:
 
     # time.sleep(1)
 
-    ref.child('chair1').update({
+    ref.child('0').update({
         "occupied": chair1_occupancy,
         "hold": chair1_hold
     })
-    ref.child('chair2').update({
+    ref.child('1').update({
         "occupied": chair2_occupancy,
         "hold": chair2_hold
     })
-    ref.child('chair3').update({
+    ref.child('2').update({
         "occupied": chair3_occupancy,
         "hold": chair3_hold
     })
