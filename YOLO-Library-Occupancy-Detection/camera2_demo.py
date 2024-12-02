@@ -14,7 +14,7 @@ firebase_admin.initialize_app(cred, {
 
 # Reference to the database path you want to update
 # TODO: Create another database reference for the demo
-ref = db.reference('occupancy/Camera2')
+ref = db.reference('libraries/libraryB/occupancy/Camera2')
 
 # Start webcam
 cap = cv2.VideoCapture(2, cv2.CAP_DSHOW)  # 0 for the embedded webcam, 1 for the second, 2 for the third, etc.
