@@ -5,7 +5,7 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 # Firebase Admin SDK JSON credentials file
-cred = credentials.Certificate("path-to-json-file")
+cred = credentials.Certificate(r"path-to-json-file")
 
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {
@@ -141,7 +141,7 @@ while True:
                 confidence_cell_phone = math.ceil((box.conf[0] * 100)) / 100
 
                 # Add confidence to the top right corner of the box
-                text_bottle = f"cell phone {confidence_cell_phone}"
+                text_bottle = f"Object {confidence_cell_phone}"
                 text_size_cell_phone, _ = cv2.getTextSize(text_bottle, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)
                 text_x_cell_phone = x2_cell_phone - text_size_cell_phone[0]
                 text_y_cell_phone = y1_cell_phone - 10 if y1_cell_phone - 10 > 10 else y1_cell_phone + 10  # Adjust text position if it's too close to the top
@@ -221,16 +221,16 @@ while True:
     # time.sleep(1)
 
     ref.child('0').update({
-        "occupied": chair1_occupancy,
-        "hold": chair1_hold
+        "isOccupied": chair1_occupancy,
+        "isReserved": chair1_hold
     })
     ref.child('1').update({
-        "occupied": chair2_occupancy,
-        "hold": chair2_hold
+        "isOccupied": chair2_occupancy,
+        "isReserved": chair2_hold
     })
     ref.child('2').update({
-        "occupied": chair3_occupancy,
-        "hold": chair3_hold
+        "isOccupied": chair3_occupancy,
+        "isReserved": chair3_hold
     })
     print("Database updated successfully!")
 
