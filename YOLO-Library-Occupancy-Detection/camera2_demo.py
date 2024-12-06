@@ -5,7 +5,8 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 # Firebase Admin SDK JSON credentials file
-cred = credentials.Certificate(r"path-to-json-file")
+cred = credentials.Certificate(r"path-to-json-file")  # Replace with your JSON file path
+# TODO: Make it .env file for security purposes
 
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {

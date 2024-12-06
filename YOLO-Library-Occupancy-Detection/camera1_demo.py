@@ -5,7 +5,8 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 # Firebase Admin SDK JSON credentials file
-cred = credentials.Certificate(r"path-to-json-file")
+cred = credentials.Certificate(r"path-to-json-file")  # Replace with your JSON file path
+# TODO: Make it .env file for security purposes
 
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {
@@ -17,7 +18,7 @@ firebase_admin.initialize_app(cred, {
 ref = db.reference('libraries/0/occupancy/cameras/0/chairs')
 
 # Start webcam
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # 0 for the embedded webcam, 1 for the second, 2 for the third, etc.
+cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)  # 0 for the embedded webcam, 1 for the second, 2 for the third, etc.
 
 # Webcam Resolution
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
@@ -51,6 +52,9 @@ objects_that_can_be_detected = ["cell phone", "bottle", "backpack", "umbrella", 
                                 "orange", "brocoli", "carrot", "hot dog", "pizza", "donut", "cake",
                                 "laptop", "mouse", "keyboard", "book", "scissors"]  # Add other objects if needed
 
+# TODO: Does making the objects_that_can_be_detected list as [0, 4, 24] improve the performance? (Does is it prevent the model to detect other objects?)
+# Possible answer: To improve the performance it should have been trained again with the intended classes
+
 # Define the specific area (ROI - Region of Interest) for the chair
 # For example, the chair is located at the region (x1, y1) to (x2, y2)
 chair_roi1 = (0, 30, 340, 610)  # (x1, y1, x2, y2)
@@ -69,7 +73,7 @@ while True:
     if not success:
         break
 
-    results = model(img, stream=True)
+    results = model(img, stream=True, conf=0.1)  # Confidence level can be adjusted
 
     cell_phone_detected_for_chair1 = False
     cell_phone_detected_for_chair2 = False

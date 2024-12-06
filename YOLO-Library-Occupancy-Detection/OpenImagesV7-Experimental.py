@@ -4,10 +4,10 @@ import cv2
 # Load an Open Images Dataset V7 pretrained YOLOv8n model
 model = YOLO("yolov8x-oiv7.pt")
 
-model = YOLO("yolo11x.pt")
+# model = YOLO("yolov10x.pt")
 
 # Run prediction
-results = model.predict(source="C:\\Users\\furkan\\Desktop\\Images\\21.jpg",conf=0.07, save=True, show=True)
+results = model.predict(source=r"path-to-image",conf=0.07, save=True, show=True)
 
 # Print details of detections
 for result in results:
