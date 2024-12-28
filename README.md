@@ -18,18 +18,18 @@ who do not have anything on the table but are in their chairs.
 ### Code Related TODOs
 - [ ] Using GPU for better performance.
 - [x] Upgrading to YOLOv10 for better results.
-- [ ] Upgrading to YOLOv11 for better results.
+- [x] Upgrading to YOLOv11 for better results.
 - [ ] Making the code more generic for multiple chairs.
 - [x] For better performance and workload, detect objects every second instead of every frame.
 - [ ] Detect other possible objects that may be used for holding (backpacks, bottle, umbrella, book, etc.)
-- [ ] Send occupancy data to Firebase database.
+- [x] Send occupancy data to Firebase database.
 - [ ] Detect other objects that are not included in class names of YOLO.
-- 
+
 ### Project Related TODOs
-- [ ] Testing the cameras with USB extension cables.
-- [ ] Installation of the cameras in the library.
-- [ ] Customize the script for the library environment after camera installation.
-- [ ] Develop the desktop application for the project in Flutter.
+- [x] Testing the cameras with USB extension cables.
+- [x] Installation of the cameras in the library.
+- [x] Customize the script for the library environment after camera installation.
+- [x] Develop the desktop application for the project in Flutter.
 - [ ] Create a website for the project.
 
 ## Followed Documentations - Tutorials - Repositories
@@ -64,10 +64,6 @@ pip install tensorflow
 ```
 pip install ultralytics
 ```
-
-## Known Issues
-
-* YOLO detects too many instances in a specific area and crashes.
 
 ## Poster
 
