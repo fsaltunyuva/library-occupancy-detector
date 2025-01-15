@@ -1,5 +1,7 @@
 # Library Occupancy Detector
 
+[Project's Website](https://library-occupancy-detector-l5dr64zqg-burakkoc5s-projects.vercel.app)
+
 This project aims to develop a computer vision model to detect seat/desk occupancy
 within libraries and show the occupancy rate of the libraries to students. The model will use
 computer vision techniques to identify unoccupied tables, chairs, and other seating areas within
