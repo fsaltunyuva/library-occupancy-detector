@@ -1,6 +1,8 @@
 # Library Occupancy Detector
 
-[Project's Website](https://library-occupancy-detector-l5dr64zqg-burakkoc5s-projects.vercel.app)
+[Project's Website](https://library-occupancy-detector.vercel.app)
+[Website Github Repository](https://github.com/burakkoc5/library-occupancy-promo)
+[Project's Desktop Application Github Repository](https://github.com/burakkoc5/library-occupancy-detector-desktop)
 
 This project aims to develop a computer vision model to detect seat/desk occupancy
 within libraries and show the occupancy rate of the libraries to students. The model will use
